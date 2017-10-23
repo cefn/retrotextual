@@ -4,6 +4,12 @@ This document covers a variety of alternatives for Logic Level and wiring of DIN
 
 See http://www.newark.com/pdfs/techarticles/microchip/3_3vto5vAnalogTipsnTricksBrchr.pdf for a good overview of tips and tricks for circuits combining both 3v3 and 5v
 
+## Summary table of 3v3 to 5V shifter components
+
+txb0108 - Octal bi-directional logic level transceiver
+SN74HCT125N - Buffer http://www.ti.com/lit/ds/symlink/sn74hc125.pdf
+SN74HC245 Octal Buffer http://www.ti.com/lit/ds/symlink/sn74hc245.pdf
+
 ## Raise Ground Level
 
 As per http://www.electrobob.com/ws2812-level-translator/#comment-96422 places the 3v3 range of logic across 0.7 to 4.1v instead.
@@ -15,6 +21,7 @@ Discussion: https://electronics.stackexchange.com/a/127610
 Datasheet: http://www.ti.com/lit/ds/symlink/sn74hc125.pdf
 Adafruit related part 1: https://www.adafruit.com/product/1787
 Adafruit related part 2: https://www.adafruit.com/product/1779
+Octal equivalent: http://www.ti.com/lit/ds/symlink/sn74hc245.pdf
 
 ## Optocoupler
 
@@ -34,8 +41,8 @@ This means updates can reach the 'end' of the chain more rapidly, without implyi
 
 # Information on timing for the protocol
 
-https://wp.josh.com/2014/05/13/ws2812-neopixels-are-not-so-finicky-once-you-get-to-know-them/
-
+1 https://wp.josh.com/2014/05/13/ws2812-neopixels-are-not-so-finicky-once-you-get-to-know-them/
+2 https://cpldcpu.com/2014/01/14/light_ws2812-library-v2-0-part-i-understanding-the-ws2812/
 # Information on power estimates
 
 https://learn.adafruit.com/sipping-power-with-neopixels
