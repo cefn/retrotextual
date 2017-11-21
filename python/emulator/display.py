@@ -16,8 +16,9 @@ halfRootTwo = rootTwo * 0.5
 
 spacing = 30        # the spacing between segments
 diagonalSpacing = spacing * halfRootTwo # the spacing where diagonal points meet (spacing at 45 degree angle)
+twiceDiagonalSpacing = diagonalSpacing * 2.0
 
-scale = 0.05        # the scale to transfer mm into pixels
+scale = 0.036        # the scale to transfer mm into pixels
 
 def createSegmentPolygon(center, length, degrees):
     halfSegmentLength = length * 0.5
@@ -54,100 +55,101 @@ characterRadius = shortSegmentLength + halfSegmentWidth + spacing + diagonalSpac
 characterDiameter = characterRadius * 2
 
 lineHeight = characterDiameter + characterRadius
+kerning = characterDiameter + characterRadius
 
-characterCenter = arr([characterRadius, lineHeight])
+characterCenter = arr([characterDiameter, lineHeight])
 
 characters = []
 for characterRow in range(2):
     for characterCol in range(10):
         character = []
         # segment 0
-        segmentCenter = characterCenter + arr([-halfShortSegmentLength, -(diagonalSpacing + shortSegmentLength)])
+        segmentCenter = characterCenter + arr([-(diagonalSpacing + halfShortSegmentLength), -(twiceDiagonalSpacing + shortSegmentLength)])
         segmentLength = shortSegmentLength
         segmentDegrees = 0
         character.append(createSegmentPolygon(segmentCenter, segmentLength, segmentDegrees))
         # segment 1
-        segmentCenter = characterCenter + arr([halfShortSegmentLength, -(diagonalSpacing + shortSegmentLength)])
+        segmentCenter = characterCenter + arr([(diagonalSpacing + halfShortSegmentLength), -(twiceDiagonalSpacing + shortSegmentLength)])
         segmentLength = shortSegmentLength
         segmentDegrees = 0
         character.append(createSegmentPolygon(segmentCenter, segmentLength, segmentDegrees))
         # segment 2
-        segmentCenter = characterCenter + arr([- (diagonalSpacing + shortSegmentLength), -halfShortSegmentLength])
+        segmentCenter = characterCenter + arr([- (twiceDiagonalSpacing + shortSegmentLength), -(diagonalSpacing + halfShortSegmentLength)])
         segmentLength = shortSegmentLength
         segmentDegrees = 90
         character.append(createSegmentPolygon(segmentCenter, segmentLength, segmentDegrees))
         # segment 3
-        segmentCenter = characterCenter + arr([-(diagonalSpacing + halfShortSegmentLength),-halfShortSegmentLength])
-        segmentLength = shortSegmentLength
+        segmentCenter = characterCenter + arr([-(diagonalSpacing + halfShortSegmentLength),-(diagonalSpacing + halfShortSegmentLength)])
+        segmentLength = longSegmentLength
         segmentDegrees = 45
         character.append(createSegmentPolygon(segmentCenter, segmentLength, segmentDegrees))
         # segment 4
-        segmentCenter = characterCenter + arr([0,-halfShortSegmentLength])
+        segmentCenter = characterCenter + arr([0,-(diagonalSpacing + halfShortSegmentLength)])
         segmentLength = shortSegmentLength
         segmentDegrees = 90
         character.append(createSegmentPolygon(segmentCenter, segmentLength, segmentDegrees))
         # segment 5
-        segmentCenter = characterCenter + arr([diagonalSpacing + halfShortSegmentLength,-halfShortSegmentLength])
-        segmentLength = shortSegmentLength
+        segmentCenter = characterCenter + arr([diagonalSpacing + halfShortSegmentLength,-(diagonalSpacing + halfShortSegmentLength)])
+        segmentLength = longSegmentLength
         segmentDegrees = -45
         character.append(createSegmentPolygon(segmentCenter, segmentLength, segmentDegrees))
         # segment 6
-        segmentCenter = characterCenter + arr([diagonalSpacing + shortSegmentLength, -halfShortSegmentLength])
+        segmentCenter = characterCenter + arr([twiceDiagonalSpacing + shortSegmentLength, -(diagonalSpacing + halfShortSegmentLength)])
         segmentLength = shortSegmentLength
         segmentDegrees = 90
         character.append(createSegmentPolygon(segmentCenter, segmentLength, segmentDegrees))
         # segment 7
-        segmentCenter = characterCenter + arr([-halfShortSegmentLength, 0])
+        segmentCenter = characterCenter + arr([-(diagonalSpacing + halfShortSegmentLength), 0])
         segmentLength = shortSegmentLength
         segmentDegrees = 0
         character.append(createSegmentPolygon(segmentCenter, segmentLength, segmentDegrees))
         # segment 8
-        segmentCenter = characterCenter + arr([halfShortSegmentLength, 0])
+        segmentCenter = characterCenter + arr([(diagonalSpacing + halfShortSegmentLength), 0])
         segmentLength = shortSegmentLength
         segmentDegrees = 0
         character.append(createSegmentPolygon(segmentCenter, segmentLength, segmentDegrees))
         # segment 9
-        segmentCenter = characterCenter + arr([- (diagonalSpacing + shortSegmentLength), halfShortSegmentLength])
+        segmentCenter = characterCenter + arr([- (twiceDiagonalSpacing + shortSegmentLength), (diagonalSpacing + halfShortSegmentLength)])
         segmentLength = shortSegmentLength
         segmentDegrees = 90
         character.append(createSegmentPolygon(segmentCenter, segmentLength, segmentDegrees))
         # segment 10
-        segmentCenter = characterCenter + arr([-(diagonalSpacing + halfShortSegmentLength),halfShortSegmentLength])
-        segmentLength = shortSegmentLength
+        segmentCenter = characterCenter + arr([-(diagonalSpacing + halfShortSegmentLength),(diagonalSpacing + halfShortSegmentLength)])
+        segmentLength = longSegmentLength
         segmentDegrees = -45
         character.append(createSegmentPolygon(segmentCenter, segmentLength, segmentDegrees))
         # segment 11
-        segmentCenter = characterCenter + arr([0,halfShortSegmentLength])
+        segmentCenter = characterCenter + arr([0,(diagonalSpacing + halfShortSegmentLength)])
         segmentLength = shortSegmentLength
         segmentDegrees = 90
         character.append(createSegmentPolygon(segmentCenter, segmentLength, segmentDegrees))
         # segment 12
-        segmentCenter = characterCenter + arr([diagonalSpacing + halfShortSegmentLength,halfShortSegmentLength])
-        segmentLength = shortSegmentLength
+        segmentCenter = characterCenter + arr([diagonalSpacing + halfShortSegmentLength,(diagonalSpacing + halfShortSegmentLength)])
+        segmentLength = longSegmentLength
         segmentDegrees = 45
         character.append(createSegmentPolygon(segmentCenter, segmentLength, segmentDegrees))
         # segment 13
-        segmentCenter = characterCenter + arr([diagonalSpacing + shortSegmentLength, halfShortSegmentLength])
+        segmentCenter = characterCenter + arr([twiceDiagonalSpacing + shortSegmentLength, (diagonalSpacing + halfShortSegmentLength)])
         segmentLength = shortSegmentLength
         segmentDegrees = 90
         character.append(createSegmentPolygon(segmentCenter, segmentLength, segmentDegrees))
         # segment 14
-        segmentCenter = characterCenter + arr([-halfShortSegmentLength, diagonalSpacing + shortSegmentLength])
+        segmentCenter = characterCenter + arr([-(diagonalSpacing + halfShortSegmentLength), twiceDiagonalSpacing + shortSegmentLength])
         segmentLength = shortSegmentLength
         segmentDegrees = 0
         character.append(createSegmentPolygon(segmentCenter, segmentLength, segmentDegrees))
         # segment 15
-        segmentCenter = characterCenter + arr([halfShortSegmentLength, diagonalSpacing + shortSegmentLength])
+        segmentCenter = characterCenter + arr([(diagonalSpacing + halfShortSegmentLength), twiceDiagonalSpacing + shortSegmentLength])
         segmentLength = shortSegmentLength
         segmentDegrees = 0
         character.append(createSegmentPolygon(segmentCenter, segmentLength, segmentDegrees))
         # add to character list
         characters.append(character)
         # move horizontal
-        characterCenter += arr([characterDiameter, 0])    # next character
+        characterCenter += arr([kerning, 0])        # next character
     # move vertical
-    characterCenter += arr([0, lineHeight])        # line feed
-    characterCenter[0] = characterRadius                  # carriage return
+    characterCenter += arr([0, lineHeight])         # line feed
+    characterCenter[0] = characterDiameter          # carriage return
 
 def generateColorSequence():
     while True:
@@ -156,7 +158,7 @@ def generateColorSequence():
 
 colorSequence = generateColorSequence()
 
-def generateFrames():
+async def scheduleWashes():
     while True:
         color = next(colorSequence)
         for character in characters:
@@ -165,9 +167,21 @@ def generateFrames():
                 segment.setFill(color)
                 segment.draw(window)
         window.update()
-        yield asyncio.sleep(0.001)
+        await asyncio.sleep(0.5)
 
-animation = generateFrames()
+async def scheduleFlashes():
+    while True:
+        color = next(colorSequence)
+        for character in characters[1::2]:
+            for segment in character:
+                segment.undraw()
+                segment.setFill(color)
+                segment.draw(window)
+        window.update()
+        await asyncio.sleep(0.1)
 
-while True:
-    next(animation)
+washSchedule = scheduleWashes()
+flashSchedule = scheduleFlashes()
+
+loop = asyncio.get_event_loop()
+loop.run_until_complete(asyncio.gather(washSchedule, flashSchedule))
