@@ -1,4 +1,5 @@
 from emulator.graphicsDisplay import *
+from asyncio import sleep
 
 display = GraphicsDisplay()
 

@@ -1,6 +1,6 @@
-Example routine to install on Mac 
+Example routine to install and launch
 
-Install homebrew
+[On a Mac] Install homebrew
 
 brew install python3
 pip3 install graphics.py
