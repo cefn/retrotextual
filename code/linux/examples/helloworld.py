@@ -13,14 +13,14 @@ async def scheduleWashes():
     while True:
         color = next(colorSequence)
         for character in display.characters:
-            character.clear(update=False)
+            character.clear(show=False)
         for index,letter in enumerate("HELLO"):
-            display.characters[index].drawLetter(letter, color, update=False)
+            display.characters[index].drawLetter(letter, color, show=False)
 
         for index,letter in enumerate("WORLD"):
-            display.characters[index + 10].drawLetter(letter, color, update=False)
+            display.characters[index + 10].drawLetter(letter, color, show=False)
 
-        display.update()
+        display.show()
 
         await asyncio.sleep(0.5)
 

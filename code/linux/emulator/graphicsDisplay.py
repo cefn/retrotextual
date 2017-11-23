@@ -162,35 +162,35 @@ class GraphicsCharacter(Character):
     def setForeground(self, color):
         self.foreground = color
 
-    def drawSegment(self, index, color, update=True):
+    def drawSegment(self, index, color, show=True):
         segment = self.segments[index]
         segment.undraw()
         segment.setFill(color)
         segment.draw(self.display.window)
-        if update:
-            self.update()
+        if show:
+            self.show()
 
-    def drawLetter(self, asciiLetter, color=None, clear=True, update=True):
+    def drawLetter(self, asciiLetter, color=None, clear=True, show=True):
         if color is None:
             color = self.foreground
         if clear:
-            self.clear(update=False)
+            self.clear(show=False)
         fontLookup = self.display.fontLookup
         if asciiLetter in fontLookup:
             litSegments = fontLookup[asciiLetter]
             for index in litSegments:
                 self.segments[index].setFill(color)
-        if update:
-            self.update()
+        if show:
+            self.show()
 
-    def clear(self, update=True):
+    def clear(self, show=True):
         for index in range(16):
-            self.drawSegment(index, "black", update=False)
-        if update:
-            self.update()
+            self.drawSegment(index, "black", show=False)
+        if show:
+            self.show()
 
-    def update(self):
-        self.display.update()
+    def show(self):
+        self.display.show()
 
 class GraphicsDisplay(Display):
     def __init__(self, cols=None, rows=None, window=None, scale=None):
@@ -215,5 +215,5 @@ class GraphicsDisplay(Display):
             center[0] = characterDiameter
             center[1] = characterRadius * 5
 
-    def update(self):
+    def show(self):
         self.window.update()
