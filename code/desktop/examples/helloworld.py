@@ -1,30 +1,23 @@
-from emulator.graphicsDisplay import *
-
+from timing import *
+from color import *
+from display.gui import GraphicsDisplay
 display = GraphicsDisplay()
 
-def generateColorSequence():
-    while True:
-        for color in ["red", "green", "blue"]:
-            yield color
+async def scheduleMessage():
+    for color in [red, green, blue]:
 
-colorSequence = generateColorSequence()
+        display.clear(show=False)
 
-async def scheduleWashes():
-    while True:
-        color = next(colorSequence)
-        for character in display.characters:
-            character.clear(show=False)
         for index,letter in enumerate("HELLO"):
-            display.characters[index].drawLetter(letter, color, show=False)
+            character = display.characters[index]
+            character.drawLetter(letter, color, show=False)
 
         for index,letter in enumerate("WORLD"):
-            display.characters[index + 10].drawLetter(letter, color, show=False)
+            character = display.characters[index + 10]
+            character.drawLetter(letter, color, show=False)
 
         display.show()
 
-        await asyncio.sleep(0.5)
+        await sleep(0.5)
 
-washSchedule = scheduleWashes()
-
-loop = asyncio.get_event_loop()
-loop.run_until_complete(washSchedule)
+forever(scheduleMessage)
