@@ -17,6 +17,8 @@ def hsb_to_rgb(h, s, b):
     if i == 5: rgb = b, p, q
     return [int(color * 255) for color in rgb]
 
+def setBrightness(color, brightness):
+    return [int(primary * brightness) for primary in color]
 
 red = [255, 0, 0]
 green = [0, 255, 0]
