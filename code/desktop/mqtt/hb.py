@@ -3,8 +3,8 @@ from hbmqtt.client import MQTTClient, ClientException
 from hbmqtt.mqtt.constants import QOS_1, QOS_2
 
 class Link(MqttLink):
-    def __init__(self, broker, subscriptions, will=None):
-        super().__init__(broker, subscriptions, will)
+    def __init__(self, *a, **k):
+        super().__init__(*a, **k)
         self.client = None
 
     async def getClient(self):
@@ -18,10 +18,9 @@ class Link(MqttLink):
                 "qos":will["qos"] if "qos" in will else 1,
                 "retain":will["retain"] if "retain" in will else True,
             }
-            client = MQTTClient(config=config)
-            await client.connect("mqtt://{}".format(self.broker))
-            await client.subscribe([ (topic, QOS_1) for topic in self.subscriptions])
-            self.client = client
+            self.client = MQTTClient(config=config)
+            await self.client.connect("mqtt://{}".format(self.broker))
+            await self.client.subscribe([ (topic, QOS_1) for topic in self.subscriptions])
         return self.client
 
     async def receiveMessages(self):
@@ -30,7 +29,7 @@ class Link(MqttLink):
             message = await client.deliver_message()
             yield (message.topic, message.data)
 
-    async def sendMessage(self, topicBytes, messageBytes, qos=QOS_1, retain=True):
+    async def sendMessage(self, topicBytes, messageBytes, qos=None, retain=True):
         client = await self.getClient()
         return await client.publish(topicBytes, messageBytes, qos, retain)
 
