@@ -5,9 +5,9 @@ from textwrap import wrap
 import random
 
 fadeWidth = 3
-defaultFadeDelay = 0.01
-defaultShowDelay = 0.5
-defaultBlankDelay = 0.5
+defaultFadeOnDelay = 0.1
+defaultOnDelay = 0.5
+defaultOffDelay = 0.5
 
 def getBrightness(index, zeroBrightnessIndex):
     fadePosition = zeroBrightnessIndex - index
@@ -18,7 +18,7 @@ def getBrightness(index, zeroBrightnessIndex):
     else:  # behind the curve, fully lit
         return 1
 
-async def scheduleLines(line1, line2, color, fadeDelay=defaultFadeDelay, showDelay=defaultShowDelay):
+async def scheduleLines(display, line1, line2, color, fadeDelay=defaultFadeOnDelay, showDelay=defaultOnDelay):
     display.clear(show=False)
 
     # create a brightness curve starting from a zeroIndex
@@ -46,16 +46,16 @@ async def scheduleLines(line1, line2, color, fadeDelay=defaultFadeDelay, showDel
 
     await sleep(showDelay)
 
-async def scheduleMessage(message):
+async def scheduleMessage(display, message):
     color = hue_to_rgb(random.random())
     lines = wrap(message, 10)
     if len(lines) % 2 != 0:
         lines.append("")  # empty line makes them an even number
     for pos in range(0, len(lines), 2):
-        await scheduleLines(lines[pos], lines[pos + 1], color)
+        await scheduleLines(display, lines[pos], lines[pos + 1], color)
 
 
-async def schedulePangrams():
+async def schedulePangrams(display):
     for mode in range(2):
         for pangram in examples:
             if mode == 0:
@@ -64,16 +64,16 @@ async def schedulePangrams():
                 pangram = pangram
             else:
                 pangram = pangram.lower()
-            await scheduleMessage(pangram)
+            await scheduleMessage(display, pangram)
             display.clear()
-            await sleep(defaultBlankDelay)
+            await sleep(defaultOffDelay)
 
 
-def render(display):
-    forever(schedulePangrams)
+def run(display):
+    async def render():
+        return await schedulePangrams(display)
+    forever(render)
 
 if __name__ == "__main__":
     from display.gui import GraphicsDisplay
-
-    display = GraphicsDisplay()
-    render(display)
+    run(GraphicsDisplay())
