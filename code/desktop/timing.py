@@ -1,4 +1,4 @@
-from asyncio import gather, get_event_loop, iscoroutine, iscoroutinefunction, sleep
+from asyncio import gather, get_event_loop, iscoroutine, iscoroutinefunction, sleep, ensure_future
 
 def forever(futureFactories):
     if iscoroutinefunction(futureFactories):
@@ -9,6 +9,8 @@ def forever(futureFactories):
     futures = [repeat(futureFactory) for futureFactory in futureFactories]
     complete(futures)
 
+def attempt(future):
+    ensure_future(future)
 
 def complete(futures):
     if iscoroutine(futures):
