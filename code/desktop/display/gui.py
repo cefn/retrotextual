@@ -33,7 +33,7 @@ def normaliseColor(color):
     colorType = type(color)
     if colorType is str:
         return color
-    elif colorType is list:
+    if colorType is list or colorType is bytearray:
         if type(color[0]) is float:
             color = [int(num * 255) for num in color]
         color = ['%.2x' % b for b in color]
