@@ -22,9 +22,11 @@ twiceDiagonalSpacing = diagonalSpacing * 2.0
 # radius includes single imaginary spacing gap around the character and interior diagonal spacing between segments
 characterRadius = shortSegmentLength + halfSegmentWidth + spacing + diagonalSpacing
 characterDiameter = characterRadius * 2
+characterGap = 1362
 
 lineHeight = characterDiameter + characterRadius
 kerning = characterDiameter + characterRadius
+
 
 scale = 0.036        # the scale to transfer mm into pixels
 
@@ -204,7 +206,7 @@ class GraphicsDisplay(Display):
         for row in range(self.rows):
             for col in range(self.cols):
                 self.characters.append(GraphicsCharacter(self, center))
-                center[0] += characterRadius * 3
+                center[0] += characterDiameter + characterGap
             center[0] = characterDiameter
             center[1] = characterRadius * 5
 
