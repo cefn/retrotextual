@@ -17,8 +17,7 @@ from config import config
 import uasyncio as asyncio
 from machine import Pin
 
-SERVER = '192.168.0.9'  # Change to suit
-# SERVER = 'iot.eclipse.org'
+SERVER = 'cefn-artful-thinkpad'  # Change to suit
 wifi_led = Pin(0, Pin.OUT, value = 0)  # Red LED for WiFi fail/not ready yet
 blue_led = Pin(2, Pin.OUT, value = 1)  # Message received
 
@@ -46,7 +45,7 @@ async def wifi_han(state):
     await asyncio.sleep(1)
 
 async def conn_han(client):
-    await client.subscribe('foo_topic', 1)
+    await client.subscribe('0/0', 1)
 
 async def main(client):
     try:
