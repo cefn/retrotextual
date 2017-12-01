@@ -3,6 +3,9 @@ from display.gui import GraphicsDisplay
 from mqtt.hb import Link
 from timing import attempt
 
+# TODO add clear behaviour which resets all segments, rather than lazy-resetting
+# TODO understand why Mosquitto's old published values remain after newly launched publishdisplay script should be reset on launch since all newColor values should differ from prevColor, forcing an MQTT message
+
 segmentTopicTemplate = "{}/{}"
 
 def marshallSegmentTopic(characterIndex, segmentIndex):
@@ -25,6 +28,7 @@ class MqttSenderCharacter(Character):
         if show:
             self.show()
 
+    # TODO CH try to schedule an MQTT write in a round robin which limits the segment rate (e.g. adds a wait whenever a segment is found to have changed, and awaits the proper time for backoff)
     def show(self):
         '''Checks per segment if colors have changed, updates MQTT topics with changes to 3-byte color specs'''
         for segmentIndex,nextColor in enumerate(self.nextColors):
