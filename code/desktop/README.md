@@ -1,11 +1,11 @@
 Example routine to install and launch
 
-# Linux (Ubuntu)
+# Linux (Ubuntu 16.10 Yakkety)
 
-pip3 install graphics.py
-pip3 install numpy
-pip3 install hbmqtt
-sudo apt install python3.6 python3-tk
+sudo apt install python3.6 python3-tk mosquitto mosquitto-clients
+sudo python3.6 -m pip install --upgrade --force-reinstall graphics.py numpy hbmqtt
+cd code/desktop 
+python3.6 examples/publishdisplay.py
 
 # Mac
 [On a Mac] Install homebrew
