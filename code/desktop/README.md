@@ -1,5 +1,13 @@
 Example routine to install and launch
 
+# Linux (Ubuntu)
+
+pip3 install graphics.py
+pip3 install numpy
+pip3 install hbmqtt
+sudo apt install python3.6 python3-tk
+
+# Mac
 [On a Mac] Install homebrew
 
 brew install python3
