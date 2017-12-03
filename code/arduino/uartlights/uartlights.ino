@@ -4,8 +4,10 @@
   #include <avr/power.h>
 #endif
 
+#define NEOPIXEL_PIN 6
+
 AltSoftSerial altSerial;
-Adafruit_NeoPixel strip = null;
+Adafruit_NeoPixel strip;
 
 int     readCount = 0;
 int     frameLength  = 0;
@@ -17,6 +19,7 @@ void resetFrame(){
 }
 
 void discardPartial() {
+    char c;
     //consumes serial bytes until buffered partial line discarded
     while(true){
         if (altSerial.available()) {
@@ -29,18 +32,18 @@ void discardPartial() {
     resetFrame();
 }
 
-void readFrameHeader(){
-    nextChar = altSerial.read();
+int readFrameHeader(){
+    char nextChar = altSerial.read();
     if(frameLength == 0){               //frameLength was not previously set
         if(frameLength % 3 == 0){       //check it's divisible by 3
             frameLength = nextChar;     //store it
             //allocate string with enough bytes, including newline
             values.reserve(frameLength + 1);
             //allocate neopixel with enough pixels
-            strip = Adafruit_NeoPixel(frameLength/3, PIN, NEO_GRB + NEO_KHZ800);
+            strip = Adafruit_NeoPixel(frameLength/3, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
             Serial.print("Allocated NeoPixel with ");
             Serial.print(frameLength/3);
-            Serial.println("pixels")
+            Serial.println("pixels");
             return 1;
         }
     }
@@ -56,12 +59,14 @@ void readFrameHeader(){
 
 void processValues(){
     int framePos;
+    int pixelPos;
     uint32_t color;
 
     //populate colors from frame
-    for(framePos = 0; framePos < frame; framePos += 3){
-        color = strip.Color(values[framePos + 0], values[framePos + 1], values[framePos + 2])
-        strip.setPixelColor(i, c);
+    for(framePos = 0; framePos < frameLength; framePos += 3){
+        pixelPos = framePos / 3;
+        color = strip.Color(values[framePos + 0], values[framePos + 1], values[framePos + 2]);
+        strip.setPixelColor(pixelPos, color);
     }
 
     //send to lights
@@ -95,7 +100,7 @@ void loop() {
             if(readCount - headerLength < frameLength ){ //subsequent non-terminal bytes are values
                 values += nextChar;
             }
-            else if(nextChar == '\n'){  //byte after values should be newline
+            else if(nextChar == '\n'){  //byte after values exhausted should be newline
                 processValues();
                 resetFrame();
             }
