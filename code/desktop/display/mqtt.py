@@ -49,7 +49,11 @@ class MqttSenderDisplay(Display):
             character.show()
 
 class MqttMonitor():
-    def __init__(self):
+    def __init__(self, host=None):
+		if host is not None:
+			self.host = host
+		else:
+			self.host="localhost"
         self.guiDisplay = GraphicsDisplay()
         self.subscriptions = []
         for characterIndex,guiCharacter in enumerate(self.guiDisplay.characters):
@@ -57,7 +61,7 @@ class MqttMonitor():
                 self.subscriptions.append(marshallSegmentTopic(characterIndex, segmentIndex))
 
     async def handleMessages(self):
-        link = Link("localhost", self.subscriptions)
+        link = Link(self.host, self.subscriptions)
         async for topic, message in link.receiveMessages():
             characterIndex, segmentIndex = unmarshallSegmentTopic(topic)
             self.guiDisplay.characters[characterIndex].drawSegment(segmentIndex, message, show=False)
