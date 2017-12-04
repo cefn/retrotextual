@@ -26,19 +26,15 @@ class UartLights:
     def __init__(self, pixelCount, baud=57600, numColorBytes = 3):
         self.pixelCount = pixelCount
         self.uart = UART(1, baud)
-        self.frameLength = pixelCount * numColorBytes
-        assert self.frameLength < 128 # a single byte is used to set the frame size
+        assert pixelCount < 256 # a single byte is used to set the pixelcount
 
     def sendColorBytes(self, buffer):
-        self.uart.write(bytes([self.frameLength]))
+        self.uart.write(bytes([self.pixelCount]))
         self.uart.write(buffer)
-        gc.collect()
 
 
-pixelCount = 16
-lights = UartLights(pixelCount=pixelCount, baud=57600, numColorBytes=3)
-
-def primaryRegime():
+def primaryRegime(pixelCount):
+    lights = UartLights(pixelCount=pixelCount, baud=115200, numColorBytes=3)
     from utime import sleep_ms, ticks_ms, ticks_diff
 
     frameCount = 0
@@ -50,8 +46,8 @@ def primaryRegime():
     blue = (0,0,255)
     yellow = (255,255,0)
     colors = (red, green, blue, yellow)
-#    fixed = green
-#    colors = (fixed, fixed, fixed, fixed)
+    #    fixed = green
+    #    colors = (fixed, fixed, fixed, fixed)
 
     def frameGeneratorFactory(pixelCount):
         for pixelPos in range(pixelCount):
@@ -61,10 +57,10 @@ def primaryRegime():
     while True:
         startFrameMs = ticks_ms()
         lights.sendColorBytes(bytes(frameGeneratorFactory(pixelCount)))
+        gc.collect()
         endFrameMs = ticks_ms()
         frameCount += 1
         print("{}, {}, {}".format(frameCount, ticks_diff(endFrameMs, startFrameMs), (frameCount * 1000)/ ticks_diff(endFrameMs, regimeStartMs)))
-        sleep_ms(500)
 
 if __name__ == "__main__":
-    primaryRegime()
+    primaryRegime(16)

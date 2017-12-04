@@ -1,103 +1,67 @@
-#include <AltSoftSerial.h>
 #include <Adafruit_NeoPixel.h>
-#ifdef __AVR__
-  #include <avr/power.h>
-#endif
+//#ifdef __AVR__
+//  #include <avr/power.h>
+//#endif
 
 #define NEOPIXEL_PIN 6
+#define BYTES_PER_PIXEL 3
 
-AltSoftSerial altSerial;
+boolean pixelCountRead = false;
+
 Adafruit_NeoPixel strip = NULL; //not initialised until first frame header arrives
+int     pixelCount  = 0;
+int     pixelPos    = 0;
 
-int     readCount = 0;
-int     frameLength  = 0;
-int     chainLength = 16;
-String  values = "";
+uint8_t colorVals[BYTES_PER_PIXEL];
+int     colorPos = 0;
 
 void resetFrame(){
-    readCount = 0;
-    values.remove(0);
+  pixelCountRead = false;
+  pixelPos = 0;
+  colorPos = 0;
 }
 
 void discardPartial() {
     char c;
     //consumes serial bytes until buffered partial line discarded
     while(true){
-        if (altSerial.available()) {
-            c = altSerial.read();
+        if (Serial.available()) {
+            c = Serial.read();
             if(c=='\n'){
                 break;
             }
         }
     }
     resetFrame();
-    Serial.println("Discarded and Reset");
+    Serial.println(F("Discard"));
 }
 
-int readFrameHeader(){
-    char nextChar = altSerial.read();
-    if(frameLength == 0){               //frameLength was not previously set
-        if(frameLength % 3 == 0){       //consistency check it's divisible by 3
-            frameLength = nextChar;     //store it
-            //allocate string with enough bytes, including newline
-            values.reserve(frameLength + 1);
-            Serial.print("Received FrameLength");
-            Serial.println(frameLength);
-            //construct neopixel with enough pixels, and begin it
-//            strip = Adafruit_NeoPixel(frameLength/3, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
-            strip = Adafruit_NeoPixel(chainLength, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
-            strip.begin();
-            Serial.print("Allocated NeoPixel with ");
-            Serial.print(frameLength/3);
-            Serial.println("pixels");
-            return 1;
-        }
+boolean readPixelCount(){
+    char nextChar = Serial.read();
+    if(pixelCount== 0){                 //pixelCount was not previously set
+      pixelCount = (int)nextChar;     //store it
+      Serial.print(F("NewCount:"));
+      Serial.println(pixelCount);
+      //construct neopixel with enough pixels, and begin it
+      //strip = Adafruit_NeoPixel(pixelCount, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
+      strip = Adafruit_NeoPixel(192, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
+      strip.begin();
+      pixelCountRead = true;
     }
-    else if (nextChar == frameLength ){ //check frameLength matches
-        Serial.println("Frame size correct");
-        return 1;
+    else if (nextChar == pixelCount){ //check frameLength matches
+      Serial.println(F("OldCount"));
+      pixelCountRead = true;
     }
-
-    //fallthrough to error state
-    Serial.println("Frame size changed or serial corrupted");
-    return 0;
-}
-
-void processValues(){
-    int framePos;
-    int pixelPos;
-
-    //populate colors from frame
-    for(framePos = 0; framePos < frameLength; framePos += 3){
-        pixelPos = framePos / 3;
-        /*
-        Serial.print("Pix:");
-        Serial.println(pixelPos);
-        Serial.print("Color:(");
-        Serial.print((uint8_t)values[framePos + 0]);
-        Serial.print(",");
-        Serial.print((uint8_t)values[framePos + 1]);
-        Serial.print(",");
-        Serial.print((uint8_t)values[framePos + 2]);
-        Serial.println(")");
-        */
-        strip.setPixelColor(pixelPos, (uint8_t)values[framePos + 0], (uint8_t)values[framePos + 1], (uint8_t)values[framePos + 2]);
+    else{
+      //fallthrough to error state
+      Serial.println(F("Corrupt"));
+      pixelCountRead = false;
     }
-
-    /*
-    for(pixelPos = 0; pixelPos < chainLength; pixelPos++){
-        strip.setPixelColor(pixelPos, 0, 255, 0);      
-    }
-    */
-  
-    //send to lights
-    Serial.println("Sending to lights");
-    strip.show();
+    return pixelCountRead;
 }
 
 void setup() {
-  Serial.begin(57600);
-  altSerial.begin(57600);
+  Serial.begin(115200);
   discardPartial();
 }
 
@@ -105,35 +69,36 @@ void loop() {
     int headerLength;
     char nextChar;
 
-    while(altSerial.available()){
-        if(readCount == 0){   //first byte is header
-            headerLength = readFrameHeader();
-
-            if(headerLength == 0){
-                discardPartial();
-                break;
-            }
-
-            readCount += headerLength;
+    while(Serial.available()){
+        if( ! pixelCountRead ){ //try to read first byte as 'pixelCount' header
+          readPixelCount();
+          if( ! pixelCountRead ){ //pi
+              discardPartial();
+              break;
+          }
         }
         else{
-            nextChar = altSerial.read();
+            nextChar = Serial.read();
 
-            if(readCount - headerLength < frameLength ){ //subsequent non-terminal bytes are values
-                values += nextChar;
+            if(pixelPos < pixelCount){ //subsequent non-terminal bytes are values
+                colorVals[colorPos] = (uint8_t)nextChar;
+                colorPos ++;
+                if(colorPos == BYTES_PER_PIXEL){
+                  strip.setPixelColor(pixelPos, colorVals[0], colorVals[1], colorVals[2]);
+                  pixelPos++;
+                  colorPos = 0;
+                }
             }
             else if(nextChar == '\n'){  //trailing byte after frame should be newline
-                Serial.println("Complete: processing");
-                processValues();
+                Serial.println(F("Show"));
+                strip.show();
                 resetFrame();
             }
             else{                       //trailing byte after frame not newline
-                Serial.println("Surplus; discarding");
+                Serial.println(F("Surplus"));
                 discardPartial();
                 break;
             }
-
-            readCount ++;
         }
     }
 }
