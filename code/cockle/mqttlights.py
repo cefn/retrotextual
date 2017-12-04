@@ -5,12 +5,15 @@ import gc
 from uasyncio import get_event_loop, sleep, sleep_ms
 from mqtt_as import MQTTClient, config
 from config import config
+import esp
+esp.osdebug(False)
 
 loop = get_event_loop()
 outages = 0
 
 SERVER = '10.42.0.1'
 characterIndex = 0
+characterName = str(characterIndex).encode('ascii')
 numSegments = 16
 segmentSize = 1
 numPixels = numSegments * segmentSize
@@ -53,16 +56,14 @@ async def delayedDraw():
     drawTask = None
     draw()
     lastDrawnMs = ticks_ms()
+    gc.collect()
 
 def lazyScheduleDraw():
     '''Schedules draw if one is not already pending'''
-    print("Scheduling draw")
     global drawTask
     if drawTask == None:
-        print("Creating task")
         drawTask = loop.create_task(delayedDraw())
     else:
-        print("Draw already due")
         pass
 
 
@@ -77,29 +78,25 @@ async def handleWifiState(state):
 
 
 async def handleConnection(client):
-    await client.subscribe("{}/+".format(characterIndex), 1) # TODO consider QOS0
+    await client.subscribe("{}/+".format(characterIndex), 0) # TODO consider QOS0
 
 
 def handleMessage(topic, msg):
-    try:
-        print(msg)
-        folder,entry = topic.split(b'/')
-        if int(folder) == characterIndex:
-            try:
-                # populate the block of pixels matching the segment with the same color
-                segmentIndex = int(entry)
-                startPixel = segmentIndex * segmentSize
-                endPixel = startPixel + segmentSize
-                pixels[startPixel:endPixel] = (msg[0],msg[1],msg[2])
-                lazyScheduleDraw()
-            except ValueError:
-                print("Entry not a number")
-                # in the future, handle special entities: color, clear
-                pass
-        else:
-            print("Received unexpected topic")
-    finally:
-        gc.collect()  # dispose of prior color
+    folder,entry = topic.split(b'/')
+    if folder == characterName:
+        try:
+            # populate the block of pixels matching the segment with the same color
+            segmentIndex = int(entry)
+            startPixel = segmentIndex * segmentSize
+            endPixel = startPixel + segmentSize
+            pixels[startPixel:endPixel] = (msg[0],msg[1],msg[2])
+            lazyScheduleDraw()
+        except ValueError:
+            print("Entry not a number")
+            # in the future, handle special entities: color, clear
+            pass
+    else:
+        print("Received unexpected topic")
 
 
 async def launchClient(client):
@@ -113,7 +110,7 @@ async def launchClient(client):
         await sleep(5)
         print('publish', n)
         # If WiFi is down the following will pause for the duration.
-        await client.publish('result', '{} repubs: {} outages: {}'.format(n, client.REPUB_COUNT, outages), qos=1)
+        await client.publish('ro', '{} r:{} o:{}'.format(n, client.REPUB_COUNT, outages), qos=0)
         n += 1
 
 
