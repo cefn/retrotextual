@@ -29,7 +29,7 @@ class Link(MqttLink):
             message = await client.deliver_message()
             yield (message.topic, message.data)
 
-    async def sendMessage(self, topicBytes, messageBytes, qos=None, retain=True):
+    async def sendMessage(self, topicBytes, messageBytes, qos=1, retain=True):
         client = await self.getClient()
         return await client.publish(topicBytes, messageBytes, qos, retain)
 
