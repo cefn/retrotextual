@@ -46,6 +46,7 @@ def connect(ssid,auth,timeout=16000):
 def draw():
     pixels.write()
 
+
 async def delayedDraw():
     '''Prevents drawing too often'''
     global drawTask, lastDrawnMs
@@ -57,6 +58,7 @@ async def delayedDraw():
     draw()
     lastDrawnMs = ticks_ms()
     gc.collect()
+
 
 def lazyScheduleDraw():
     '''Schedules draw if one is not already pending'''
@@ -78,7 +80,7 @@ async def handleWifiState(state):
 
 
 async def handleConnection(client):
-    await client.subscribe("{}/+".format(characterIndex), 0) # TODO consider QOS0
+    await client.subscribe("{}/+".format(characterIndex), qos=1) # TODO consider QOS0
 
 
 def handleMessage(topic, msg):
