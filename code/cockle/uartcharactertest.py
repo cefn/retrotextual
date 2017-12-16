@@ -1,11 +1,32 @@
 from neoSPI import NeoPixel
 from machine import SPI,freq
-from utime import ticks_ms, ticks_diff
+from utime import sleep_ms, ticks_ms, ticks_diff
 import gc
 from uasyncio import get_event_loop, sleep_ms
 from mqtt_as import MQTTClient, config
 from config import config
 import esp
+
+from machine import UART
+import gc
+
+class UartLights:
+    def __init__(self, pixelCount=16, baud=115200, bytesPerPixel = 3):
+        assert pixelCount < 256 # a single byte is used to set the pixelcount
+        self.uart = UART(1, baud)
+        self.header = bytes([pixelCount])   # set the leading byte to be permanently the pixelCount
+        self.buffer = bytearray(pixelCount * bytesPerPixel) # a byte each for red, green, blue
+        self.footer = bytes([ord('\n')])    # set the trailing byte to be permanently newline
+
+    def sendColorBytes(self):
+        self.uart.write(self.header)
+        self.uart.write(self.buffer)
+        self.uart.write(self.footer)
+
+bytesPerPixel = 3
+pixelCount = 16
+baud = 115200
+lights = UartLights(pixelCount=pixelCount, baud=baud, bytesPerPixel=bytesPerPixel)
 
 esp.osdebug(False)
 freq(160000000)
@@ -24,7 +45,6 @@ segmentSize = 1
 numPixels = numSegments * segmentSize
 
 spi = SPI(1, baudrate=3200000)
-pixels = NeoPixel(spi, numPixels)
 
 framesPerSecond = 20
 drawPeriodMs = 1000 // framesPerSecond
@@ -34,7 +54,7 @@ async def launchDrawing():
     while True:
         global drawNeeded
         if drawNeeded:
-            pixels.write()
+            lights.sendColorBytes()
             drawNeeded = False
         await sleep_ms(drawPeriodMs)
 
@@ -93,7 +113,10 @@ def handleMessage(topic, msg):
             segmentIndex = int(entry)
             startPixel = segmentIndex * segmentSize
             endPixel = startPixel + segmentSize
-            pixels[startPixel:endPixel] = (msg[0], msg[1], msg[2])
+            for pixel in range(startPixel, endPixel):
+                startByte = pixel * 3
+                endByte = startByte + 3
+                lights.buffer[startByte:endByte] = msg
             scheduleDraw()
         except ValueError:
             print("Entry not a number")
