@@ -23,44 +23,48 @@ from machine import UART
 import gc
 
 class UartLights:
-    def __init__(self, pixelCount, baud=57600, numColorBytes = 3):
-        self.pixelCount = pixelCount
-        self.uart = UART(1, baud)
+    def __init__(self, pixelCount=16, baud=115200, bytesPerPixel = 3):
         assert pixelCount < 256 # a single byte is used to set the pixelcount
+        self.uart = UART(1, baud)
+        self.header = bytes([pixelCount])   # set the leading byte to be permanently the pixelCount
+        self.buffer = bytearray(pixelCount * bytesPerPixel) # a byte each for red, green, blue
+        self.footer = bytes([ord('\n')])    # set the trailing byte to be permanently newline
 
-    def sendColorBytes(self, buffer):
-        self.uart.write(bytes([self.pixelCount]))
-        self.uart.write(buffer)
+    def sendColorBytes(self):
+        self.uart.write(self.header)
+        self.uart.write(self.buffer)
+        self.uart.write(self.footer)
 
+def primaryRegime():
 
-def primaryRegime(pixelCount):
-    lights = UartLights(pixelCount=pixelCount, baud=115200, numColorBytes=3)
+    bytesPerPixel = 3
+    pixelCount = 16
+    baud = 115200
+
+    lights = UartLights(pixelCount=pixelCount, baud=baud, bytesPerPixel=bytesPerPixel)
     from utime import sleep_ms, ticks_ms, ticks_diff
 
     frameCount = 0
-
     regimeStartMs = ticks_ms()
 
-    red = (255,0,0)
-    green = (0,255,0)
-    blue = (0,0,255)
-    yellow = (255,255,0)
+    red = b'\xff\x00\x00'
+    green = b'\x00\xff\x00'
+    blue = b'\x00\x00\xff'
+    yellow = b'\x00\xff\xff'
     colors = (red, green, blue, yellow)
-    #    fixed = green
-    #    colors = (fixed, fixed, fixed, fixed)
-
-    def frameGeneratorFactory(pixelCount):
-        for pixelPos in range(pixelCount):
-            yield from colors[(pixelPos + frameCount) % 4]
-        yield ord('\n')
 
     while True:
         startFrameMs = ticks_ms()
-        lights.sendColorBytes(bytes(frameGeneratorFactory(pixelCount)))
-        gc.collect()
+        for pixelPos in range(0, pixelCount):
+            bufferPos = pixelPos * bytesPerPixel
+            offset = (pixelPos + frameCount) % 4
+            lights.buffer[bufferPos:bufferPos+bytesPerPixel] = colors[offset]
+        lights.sendColorBytes()
         endFrameMs = ticks_ms()
         frameCount += 1
-        print("{}, {}, {}".format(frameCount, ticks_diff(endFrameMs, startFrameMs), (frameCount * 1000)/ ticks_diff(endFrameMs, regimeStartMs)))
+        if frameCount % 100 == 0:
+            print((frameCount * 1000)/ ticks_diff(endFrameMs, regimeStartMs))
+        gc.collect()
 
 if __name__ == "__main__":
-    primaryRegime(16)
+    primaryRegime()
