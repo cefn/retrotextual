@@ -1,24 +1,29 @@
 from display.gui import *
-from timing import sleep, complete
+from timing import sleep, forever
 
-display = GraphicsDisplay()
-
-async def scheduleWashes():
+async def scheduleWashes(display):
     while True:
-        for color in ["red", "green", "blue"]:
+        for color in [[255,0,0], [0,255,0], [0,0,255]]:
             for character in display.characters:
                 for index in range(16):
-                    character.setSegment(index, color, show=False)
+                    character.drawSegment(index, color, show=False)
             display.show()
             await sleep(0.5)
 
-async def scheduleFlashes():
+async def scheduleFlashes(display):
     while True:
-        for color in ["red", "green", "blue"]:
+        for color in [(255,0,0), (0,255,0), (0,0,255)]:
             for character in display.characters[1::2]:
                 for index in range(16):
-                    character.setSegment(index, color, show=False)
+                    character.drawSegment(index, color, show=False)
             display.show()
             await sleep(0.1)
 
-complete(scheduleWashes(), scheduleFlashes())
+def run(display):
+    async def render():
+        return await scheduleWashes(display)
+    forever(render)
+
+if __name__ == "__main__":
+    from display.gui import GraphicsDisplay
+    run(GraphicsDisplay())
