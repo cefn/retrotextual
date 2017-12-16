@@ -54,7 +54,6 @@ def primaryRegime():
     colors = (red, green, blue, yellow)
 
     while True:
-        startFrameMs = ticks_ms()
         for pixelPos in range(0, pixelCount):
             bufferPos = pixelPos * bytesPerPixel
             offset = (pixelPos + frameCount) % 4
