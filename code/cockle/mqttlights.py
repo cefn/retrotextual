@@ -15,7 +15,7 @@ outages = 0
 lastUpMs = None
 
 SERVER = '10.42.0.1'
-characterIndex = 1
+characterIndex = 0
 characterName = str(characterIndex).encode('ascii')
 segmentPattern = "{}/+".format(characterIndex)
 livenessTopic = 'node/{}'.format(characterName)
@@ -63,7 +63,7 @@ def connect(ssid, auth, timeout=16000):
 
 def reportUptime():
     if lastUpMs != None:
-        print("Uptime {}ms ".format(ticks_diff(lastUpMs, ticks_ms())))
+        print("Uptime {}ms ".format(ticks_diff(ticks_ms(), lastUpMs)))
     print("{} outages so far".format(outages))
 
 async def handleWifiState(state):
