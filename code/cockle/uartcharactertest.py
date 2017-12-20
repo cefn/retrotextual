@@ -10,6 +10,8 @@ import esp
 from machine import UART
 import gc
 
+chainMap = (14,11,15,12,13,8,10,1,9,2,0,5,4,7,3,6)
+
 class UartLights:
     def __init__(self, pixelCount=16, baud=115200, bytesPerPixel = 3):
         assert pixelCount < 256 # a single byte is used to set the pixelcount
@@ -36,7 +38,7 @@ outages = 0
 lastUpMs = None
 
 SERVER = '10.42.0.1'
-characterIndex = 1
+characterIndex = 0
 characterName = str(characterIndex).encode('ascii')
 segmentPattern = "{}/+".format(characterIndex)
 livenessTopic = 'node/{}'.format(characterName)
@@ -68,6 +70,8 @@ def connect(ssid, auth, timeout=16000):
     from network import WLAN, STA_IF, AP_IF
     global uplink
     uplink = WLAN(STA_IF)
+    #uplink = WLAN(WLAN.STA)
+    #uplink.init(WLAN.STA)
     uplink.active(True)
     uplink.connect(ssid, auth)
     started = ticks_ms()
@@ -110,7 +114,7 @@ def handleMessage(topic, msg):
     if folder == characterName:
         try:
             # populate the block of pixels matching the segment with the same color
-            segmentIndex = int(entry)
+            segmentIndex = chainMap[int(entry)]
             startPixel = segmentIndex * segmentSize
             endPixel = startPixel + segmentSize
             for pixel in range(startPixel, endPixel):
