@@ -1,2 +1,2 @@
 #/bin/sh
-export PYTHONPATH=.; python3 examples/subscribedisplay.py
+export PYTHONPATH=.; python3.6 examples/subscribedisplay.py
