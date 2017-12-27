@@ -162,9 +162,9 @@ async def periodicStatus():
         await client.publish(livenessTopic, b'live', retain=True, qos=1)
         reportUptime()
         await sleep_ms(10000)
-#try:
-clientTask = loop.create_task(launchClient(client))
-drawTask = loop.create_task(launchDrawing())
-loop.run_until_complete(periodicStatus())
-#finally:  # Prevent LmacRxBlk:1 errors.
-#    client.close()
+try:
+    clientTask = loop.create_task(launchClient(client))
+    drawTask = loop.create_task(launchDrawing())
+    loop.run_until_complete(periodicStatus())
+finally:  # Prevent LmacRxBlk:1 errors.
+    client.close()
