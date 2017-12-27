@@ -1,0 +1,64 @@
+pi@raspberrypi:~/Desktop/git/retrotextual/code/desktop $ clear; ./runpublish.sh 
+
+Client not connected, waiting for it
+Task exception was never retrieved
+future: <Task finished coro=<MqttSenderDisplay.send() done, defined at /home/pi/Desktop/git/retrotextual/code/desktop/display/mqtt.py:58> exception=ConnectionResetError('Connection lost',)>
+Traceback (most recent call last):
+  File "/home/pi/Desktop/git/retrotextual/code/desktop/display/mqtt.py", line 60, in send
+    await character.send()
+  File "/home/pi/Desktop/git/retrotextual/code/desktop/display/mqtt.py", line 44, in send
+    await self.display.link.sendMessage(marshallSegmentTopic(self.characterIndex, segmentIndex), nextColor)
+  File "/home/pi/Desktop/git/retrotextual/code/desktop/mqtt/hb.py", line 34, in sendMessage
+    return await client.publish(topicBytes, messageBytes, qos, retain)
+  File "/home/pi/berryconda3/lib/python3.6/site-packages/hbmqtt/client.py", line 73, in wrapper
+    return (yield from func(self, *args, **kwargs))
+  File "/home/pi/berryconda3/lib/python3.6/site-packages/hbmqtt/client.py", line 272, in publish
+    return (yield from self._handler.mqtt_publish(topic, message, app_qos, app_retain))
+  File "/home/pi/berryconda3/lib/python3.6/site-packages/hbmqtt/mqtt/protocol/handler.py", line 190, in mqtt_publish
+    yield from self._handle_message_flow(message)
+  File "/home/pi/berryconda3/lib/python3.6/site-packages/hbmqtt/mqtt/protocol/handler.py", line 203, in _handle_message_flow
+    yield from self._handle_qos0_message_flow(app_message)
+  File "/home/pi/berryconda3/lib/python3.6/site-packages/hbmqtt/mqtt/protocol/handler.py", line 224, in _handle_qos0_message_flow
+    yield from self._send_packet(packet)
+  File "/home/pi/berryconda3/lib/python3.6/site-packages/hbmqtt/mqtt/protocol/handler.py", line 448, in _send_packet
+    yield from packet.to_stream(self.writer)
+  File "/home/pi/berryconda3/lib/python3.6/site-packages/hbmqtt/mqtt/packet.py", line 203, in to_stream
+    yield from writer.drain()
+  File "/home/pi/berryconda3/lib/python3.6/site-packages/hbmqtt/adapters.py", line 164, in drain
+    yield from self._writer.drain()
+  File "/home/pi/berryconda3/lib/python3.6/asyncio/streams.py", line 333, in drain
+    yield from self._protocol._drain_helper()
+  File "/home/pi/berryconda3/lib/python3.6/asyncio/streams.py", line 204, in _drain_helper
+    raise ConnectionResetError('Connection lost')
+ConnectionResetError: Connection lost
+Disconnected from broker
+ClientProtocolHandler Unhandled exception in reader coro: BrokenPipeError(32, 'Broken pipe')
+Client not connected, waiting for it
+Client not connected, waiting for it
+Client not connected, waiting for it
+Client not connected, waiting for it
+Client not connected, waiting for it
+Client not connected, waiting for it
+Client not connected, waiting for it
+Client not connected, waiting for it
+Client not connected, waiting for it
+Client not connected, waiting for it
+Unhandled exception: 'NoneType' object has no attribute 'write'
+Task exception was never retrieved
+future: <Task finished coro=<ProtocolHandler._reader_loop() done, defined at /home/pi/berryconda3/lib/python3.6/site-packages/hbmqtt/mqtt/protocol/handler.py:360> exception=AttributeError("'NoneType' object has no attribute 'client_id'",)>
+Traceback (most recent call last):
+  File "/home/pi/berryconda3/lib/python3.6/site-packages/hbmqtt/mqtt/protocol/handler.py", line 442, in _reader_loop
+    self.logger.debug("%s Reader coro stopped" % self.session.client_id)
+AttributeError: 'NoneType' object has no attribute 'client_id'
+Task was destroyed but it is pending!
+task: <Task pending coro=<MqttSenderDisplay.send() running at /home/pi/Desktop/git/retrotextual/code/desktop/display/mqtt.py:60> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x74522530>()]>>
+Task exception was never retrieved
+future: <Task finished coro=<ClientProtocolHandler.mqtt_ping() done, defined at /home/pi/berryconda3/lib/python3.6/site-packages/hbmqtt/mqtt/protocol/client_handler.py:160> exception=AttributeError("'NoneType' object has no attribute 'write'",)>
+Traceback (most recent call last):
+  File "/home/pi/berryconda3/lib/python3.6/site-packages/hbmqtt/mqtt/protocol/client_handler.py", line 163, in mqtt_ping
+    yield from self._send_packet(ping_packet)
+  File "/home/pi/berryconda3/lib/python3.6/site-packages/hbmqtt/mqtt/protocol/handler.py", line 448, in _send_packet
+    yield from packet.to_stream(self.writer)
+  File "/home/pi/berryconda3/lib/python3.6/site-packages/hbmqtt/mqtt/packet.py", line 202, in to_stream
+    writer.write(self.to_bytes())
+AttributeError: 'NoneType' object has no attribute 'write'

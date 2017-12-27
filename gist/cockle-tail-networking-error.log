@@ -1,0 +1,23 @@
+cnt 
+LmacRxBlk:1
+LmacRxBlk:1
+LmacRxBlk:1
+state: 5 -> 2 (2c0)
+rm 0
+LmacRxBlk:1
+reconnect
+state: 2 -> 0 (0)
+Checking WiFi integrity.
+scandone
+LmacRxBlk:1
+LmacRxBlk:1
+LmacRxBlk:1
+scandone
+state: 0 -> 2 (b0)
+state: 2 -> 3 (0)
+state: 3 -> 5 (10)
+add 0
+aid 1
+cnt 
+LmacRxBlk:1
+LmacRxBlk:1
