@@ -45,7 +45,7 @@ boolean readSegmentCount(){
       Serial.println(segmentCount);
       //construct neopixel with enough pixels, and begin it
       //strip = Adafruit_NeoPixel(segmentCount * segmentLength, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
-      strip = Adafruit_NeoPixel(192, NEOPIXEL_PIN, NEO_GRB + NEO_KHZ800);
+      strip = Adafruit_NeoPixel(196, NEOPIXEL_PIN, NEO_RGB + NEO_KHZ800);
       strip.begin();
       segmentCountRead = true;
     }
@@ -68,6 +68,9 @@ void setup() {
 
 void setSegmentColor(int segmentPos, uint8_t red, uint8_t green, uint8_t blue){
   int lower = segmentPos * segmentLength;
+  if(segmentPos > 0){ // calculate offset for idle pixels
+    lower += ((segmentPos - 1) / 4) + 1;
+  }
   int upper = lower + segmentLength;
   int pixelPos;
   for(pixelPos = lower; pixelPos < upper; pixelPos ++){
