@@ -6,6 +6,8 @@
 #define NEOPIXEL_PIN A3
 #define BYTES_PER_PIXEL 3
 
+boolean skipIdlePixel = true;
+
 boolean segmentCountRead = false;
 
 Adafruit_NeoPixel strip = NULL; //not initialised until first frame header arrives
@@ -68,7 +70,7 @@ void setup() {
 
 void setSegmentColor(int segmentPos, uint8_t red, uint8_t green, uint8_t blue){
   int lower = segmentPos * segmentLength;
-  if(segmentPos > 0){ // calculate offset for idle pixels
+  if(skipIdlePixel && segmentPos > 0){ // add offset to skip idle pixels
     lower += ((segmentPos - 1) / 4) + 1;
   }
   int upper = lower + segmentLength;
