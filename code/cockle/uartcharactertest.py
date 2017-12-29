@@ -8,7 +8,20 @@ from mqtt_as import MQTTClient, config
 from config import config
 from network import WLAN, STA_IF, AP_IF
 
-debugServer = "192.168.1.17"
+homeConfig = dict(
+    broker="192.168.1.17",
+    ssid="SkyHome",
+    auth="c3fnh0ile",
+)
+
+mobileConfig = dict(
+    broker="192.168.43.58",
+    ssid="SkyMobile",
+    auth="c3fnh0ile",
+)
+
+debugConfig = mobileConfig
+
 MQTTClient.DEBUG = False # suppress mqtt_as Memory reports
 
 # shutdown 'access point' network interface
@@ -32,12 +45,14 @@ characterName = str(characterIndex).encode('ascii')
 segmentPattern = "{}/+".format(characterIndex)
 livenessTopic = 'node/{}'.format(characterName)
 
-if debugServer is not None:
-    ssid = 'SkyHome'
-    auth = 'c3fnh0ile'
+if debugConfig is not None:
+    ssid = debugConfig['ssid']
+    auth = debugConfig['auth']
+    broker = debugConfig['broker']
 else:
     ssid = 'RetroFloorA' if characterIndex < 10 else 'RetroFloorB',
     auth = '4lphaT3xt' if characterIndex < 10 else '8ravoT3xt'
+    broker = '10.42.0.1'
 
 numSegments = 16
 segmentSize = 1
@@ -53,7 +68,7 @@ pixelCount = 16
 baud = 115200
 
 # Networking and MQTT configuration
-config['server'] = debugServer if debugServer is not None else '10.42.0.1'
+config['server'] = broker
 config['will'] = (livenessTopic, 'dead', True, 1)
 config['keepalive'] = 120
 
@@ -191,8 +206,6 @@ async def serviceMqtt():
         sys.print_exception(e)
         raise
     finally:
-        if debugServer:
-            print("Is debugServer {} available?".format(debugServer))
         # Prevent LmacRxBlk:1 hang?
         client.close()
 
