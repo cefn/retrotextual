@@ -20,9 +20,10 @@ mobileConfig = dict(
     auth="c3fnh0ile",
 )
 
-debugConfig = mobileConfig
+#debugConfig = mobileConfig
+debugConfig = None
 
-MQTTClient.DEBUG = False # suppress mqtt_as Memory reports
+MQTTClient.DEBUG = False  # suppress mqtt_as Memory reports
 
 # shutdown 'access point' network interface
 downlink = WLAN(AP_IF)
@@ -50,7 +51,7 @@ if debugConfig is not None:
     auth = debugConfig['auth']
     broker = debugConfig['broker']
 else:
-    ssid = 'RetroFloorA' if characterIndex < 10 else 'RetroFloorB',
+    ssid = 'RetroFloorA' if characterIndex < 10 else 'RetroFloorB'
     auth = '4lphaT3xt' if characterIndex < 10 else '8ravoT3xt'
     broker = '10.42.0.1'
 
@@ -94,8 +95,8 @@ lights = UartLights(pixelCount=pixelCount, baud=baud, bytesPerPixel=bytesPerPixe
 
 
 async def serviceDrawing():
+    global drawNeeded
     while True:
-        global drawNeeded
         if drawNeeded:
             lights.sendColorBytes()
             drawNeeded = False
@@ -120,18 +121,19 @@ def hardreset():
     deepsleep()
 
 
-def checkwifi(ssid, auth): # todo make async?
+def launchwifi(ssid, auth): # todo make async?
     if not(uplink.isconnected()):
-        print(b'Connecting now')
+        print(b'Connecting...')
         uplink.connect(ssid, auth)
         for count in range(16):
             if uplink.isconnected():
+                print(b'Now connected')
                 return True
             else:
                 blocking_sleep_ms(1000)
         raise Exception("Uplink not available")
     else:
-        print(b'Was connected')
+        print(b'Already connected')
         return True
 
 
@@ -141,9 +143,18 @@ def printReport():
         uptime = ticks_diff(ticks_ms(), lastUpMs) // 1000
     print("Uptime {} s, outages {}".format(uptime, outages))
 
-async def handleWifiState(state):
+async def handleBrokerState(connected):
+    """Callback registered with mqtt_as handling changes to network"""
+
+    # Currently, simply resets
+    if not connected:
+        print("Disconnected. Attempt hard reset")
+        hardreset()
+
+    #Previously, attempted to track and recover
+    """
     global outages, lastUpMs
-    if state:
+    if connected:
         lastUpMs = ticks_ms()
         print('We are connected to broker.')
     else:
@@ -153,13 +164,25 @@ async def handleWifiState(state):
         lastUpMs = None
     await async_sleep_ms(1000)
 
+    """
+
+
+async def publishLiveness(client):
+    await client.publish(livenessTopic, b'live', retain=True, qos=1)
+
 
 async def handleConnection(client):
-    await client.publish(livenessTopic, b'live', retain=True, qos=1)
+    await publishLiveness(client)
     await client.subscribe(segmentPattern, qos=0)
 
 
 def handleMessage(topic, msg):
+    # artificially raises an exception after 20 seconds
+    """
+    if ticks_diff(ticks_ms(), startedMs) > 20000:
+        print("Raising exception")
+        raise Exception
+    """
     gc.collect()
     folder, entry = topic.split(b'/')
     if folder == characterName:
@@ -180,53 +203,52 @@ def handleMessage(topic, msg):
     else:
         print("Received unexpected topic")
 
+
 async def serviceMqtt():
 
-    config['wifi_coro'] = handleWifiState
+    config['wifi_coro'] = handleBrokerState
     config['connect_coro'] = handleConnection
     config['subs_cb'] = handleMessage
+
+    publishPeriod = config['keepalive'] * 1000 // 2
 
     client = MQTTClient(config)
 
     try:
-        await client.connect()
+        try:
+            await client.connect()
+            while True:
+                await publishLiveness(client)
+                printReport()
+                await async_sleep_ms(publishPeriod)
+        except OSError:
+            print('Connection failed.')
+            raise
+        finally:
+            # Prevent LmacRxBlk:1 hang?
+            client.close()
 
-        publishPeriod = config['keepalive'] * 1000 // 2
-
-        while True:
-            await client.publish(livenessTopic, b'live', retain=True, qos=1)
-            printReport()
-            await async_sleep_ms(publishPeriod)
-
-    except OSError:
-        print('Connection failed.')
+    except KeyboardInterrupt:
         raise
     except Exception as e:
         print("Exception in serviceMqtt()")
         sys.print_exception(e)
-        raise
-    finally:
-        # Prevent LmacRxBlk:1 hang?
-        client.close()
+        hardreset()
 
 loop = get_event_loop()
-
 
 def service():
 
     # ensure wifi connection
-    checkwifi(ssid, auth)
+    launchwifi(ssid, auth)
 
-    try:
-        mqttTask = loop.create_task(serviceMqtt())
-        drawTask = loop.create_task(serviceDrawing())
-        loop.run_forever()
-    except Exception as e:
-        sys.print_exception(e)
-        raise
-    finally:
-        if mqttTask: mqttTask.cancel()
-        if drawTask: drawTask.cancel()
+    mqttCoro = serviceMqtt()
+    drawCoro = serviceDrawing()
+
+    loop.create_task(mqttCoro)
+    loop.create_task(drawCoro)
+
+    loop.run_until_complete(mqttCoro)
 
 def run():
     try:
