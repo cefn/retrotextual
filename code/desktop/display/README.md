@@ -6,8 +6,15 @@ Scheduling becomes a matter of killing a script already running, and launching a
 
 To run this emulator, make sure the following install steps have been run...
 
-pip3 install hbmqtt
-pip3 install graphics.py
-...which requires tk...
-[on Ubuntu] sudo apt install python3-tk
+`pip3 install hbmqtt numpy graphics.py`
+
+Note: graphics.py requires tk, [on Ubuntu] `sudo apt install python3-tk`
+
+# Running
+
+Change into the `retrotextual:code/desktop` directory and try one of the following lines to launch a graphical window and run an animation...
+
+python3 -m examples.helloworld
+python3 -m examples.hellofade
+python3 -m examples.flashwash
 
