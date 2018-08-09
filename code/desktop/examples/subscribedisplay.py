@@ -7,7 +7,7 @@ def run(host=None):
 
 	async def periodicDraw():
 		while True:
-			await sleep(0.1)
+			await sleep(0.2) # should be 0.0 excepting case where CPU shared with animator and broker?
 			monitor.guiDisplay.show()
 
 	messageCoro = monitor.handleMessages()
