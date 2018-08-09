@@ -27,7 +27,7 @@ characterGap = 1362
 lineHeight = characterDiameter + characterRadius
 kerning = characterDiameter + characterRadius
 
-
+# TODO calculate this based on character wrapping and intended window width
 scale = 0.036        # the scale to transfer mm into pixels
 
 def normaliseColor(color):
