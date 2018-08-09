@@ -20,6 +20,7 @@ Typical throughput results - number of frames, ms for serial send and frames per
 '''
 
 from machine import UART
+import network
 import gc
 
 class UartLights:
@@ -36,6 +37,8 @@ class UartLights:
         self.uart.write(self.footer)
 
 def primaryRegime():
+    wlan = network.WLAN()
+    wlan.disconnect()
 
     bytesPerPixel = 3
     pixelCount = 16
@@ -63,6 +66,7 @@ def primaryRegime():
         frameCount += 1
         if frameCount % 100 == 0:
             print((frameCount * 1000)/ ticks_diff(endFrameMs, regimeStartMs))
+        sleep_ms(1000)
         gc.collect()
 
 if __name__ == "__main__":
