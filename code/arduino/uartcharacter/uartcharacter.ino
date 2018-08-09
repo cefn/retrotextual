@@ -7,6 +7,7 @@
 #define BYTES_PER_PIXEL 3
 
 boolean skipIdlePixel = true;
+boolean greenVendor = false;
 
 boolean segmentCountRead = false;
 
@@ -75,8 +76,15 @@ void setSegmentColor(int segmentPos, uint8_t red, uint8_t green, uint8_t blue){
   }
   int upper = lower + segmentLength;
   int pixelPos;
+  int relativePos = 0;
   for(pixelPos = lower; pixelPos < upper; pixelPos ++){
-    strip.setPixelColor(pixelPos, red, green, blue);
+    if(greenVendor && relativePos != 0 && relativePos != 11){
+      strip.setPixelColor(pixelPos, red, blue, green);    
+    }
+    else{
+      strip.setPixelColor(pixelPos, red, green, blue);
+    }
+    relativePos ++;
   } 
 }
 
