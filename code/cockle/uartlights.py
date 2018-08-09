@@ -59,14 +59,13 @@ def primaryRegime():
     while True:
         for pixelPos in range(0, pixelCount):
             bufferPos = pixelPos * bytesPerPixel
-            offset = (pixelPos + frameCount) % 4
+            offset = (pixelPos + frameCount) % 4 # len(colors)?
             lights.buffer[bufferPos:bufferPos+bytesPerPixel] = colors[offset]
         lights.sendColorBytes()
         endFrameMs = ticks_ms()
         frameCount += 1
         if frameCount % 100 == 0:
             print((frameCount * 1000)/ ticks_diff(endFrameMs, regimeStartMs))
-        sleep_ms(1000)
         gc.collect()
 
 if __name__ == "__main__":
