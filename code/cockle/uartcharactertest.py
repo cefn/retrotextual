@@ -40,7 +40,7 @@ esp.osdebug(None)
 # overclock CPU for speed
 freq(160000000)
 
-characterIndex = 7
+characterIndex = 1
 
 characterName = str(characterIndex).encode('ascii')
 segmentPattern = "{}/+".format(characterIndex)
