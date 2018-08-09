@@ -40,7 +40,7 @@ esp.osdebug(None)
 # overclock CPU for speed
 freq(160000000)
 
-characterIndex = 1
+characterIndex = 7
 
 characterName = str(characterIndex).encode('ascii')
 segmentPattern = "{}/+".format(characterIndex)
@@ -51,8 +51,8 @@ if debugConfig is not None:
     auth = debugConfig['auth']
     broker = debugConfig['broker']
 else:
-    ssid = 'RetroFloorA' if characterIndex < 10 else 'RetroFloorB'
-    auth = '4lphaT3xt' if characterIndex < 10 else '8ravoT3xt'
+    ssid = 'RetroFloorA' if characterIndex < 9 else 'RetroFloorB'
+    auth = '4lphaT3xt' if characterIndex < 9 else '8ravoT3xt'
     broker = '10.42.0.1'
 
 numSegments = 16
@@ -71,7 +71,7 @@ baud = 115200
 # Networking and MQTT configuration
 config['server'] = broker
 config['will'] = (livenessTopic, 'dead', True, 1)
-config['keepalive'] = 120
+config['keepalive'] = 16
 
 startedMs = ticks_ms()
 lastUpMs = None
@@ -210,7 +210,7 @@ async def serviceMqtt():
     config['connect_coro'] = handleConnection
     config['subs_cb'] = handleMessage
 
-    publishPeriod = config['keepalive'] * 1000 // 2
+    publishPeriod = 60
 
     client = MQTTClient(config)
 
