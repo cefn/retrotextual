@@ -55,6 +55,8 @@ To cause the segment information to be sent to an MQTT broker instead of display
 
 To subscribe to the MQTT topics and show the published colors in a simulated Graphical Window, create a display.mqtt.MqttMonitor (see [mqtt.py](https://github.com/cefn/retrotextual/blob/master/code/desktop/display/mqtt.py).
 
+Example python scripts which configure and launch a protocol broadcast and protocol subscription can be found in [code/desktop/examples/publishdisplay.py](https://github.com/cefn/retrotextual/blob/master/code/desktop/examples/publishdisplay.py) and [code/desktop/examples/subscribedisplay.py](https://github.com/cefn/retrotextual/blob/master/code/desktop/examples/subscribedisplay.py)
+
 # Live deployment
 
 Live deployment is the same as the Protocol simulation, except that ESP8266 microcontrollers (D1 Minis) are each running a differently configured python routine by copying the [mqttlights.py](https://github.com/cefn/retrotextual/blob/master/code/cockle/mqttlights.py) to main.py with the specific modifications needed for its letter. See the section __Device Configuration__ above.
