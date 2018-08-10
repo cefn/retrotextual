@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/runpy.py", line 174, in _run_module_as_main
+    "__main__", fname, loader, pkg_name)
+  File "/usr/lib/python2.7/runpy.py", line 72, in _run_code
+    exec code in run_globals
+  File "/home/cefn/.local/lib/python2.7/site-packages/psychopy/app/psychopyApp.py", line 10, in <module>
+    from psychopy.app._psychopyApp import PsychoPyApp, __version__
+  File "/home/cefn/.local/lib/python2.7/site-packages/psychopy/app/_psychopyApp.py", line 20, in <module>
+    import wx
+ImportError: No module named wx
