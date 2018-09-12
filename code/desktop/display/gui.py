@@ -189,16 +189,16 @@ class GraphicsCharacter(Character):
 
 class GraphicsDisplay(Display):
     def __init__(self, cols=None, rows=None, window=None, scale=None):
-        super().__init__()
+        super().__init__(cols, rows)
         if scale is not None:
             self.scale = scale
         else:
-            self.scale = 0.036
+            self.scale = 0.04
         if window is not None:
             self.window = window
         else:
-            windowWidth = self.scale * ((self.cols * characterDiameter) + ((self.cols + 1) * characterRadius))
-            windowHeight = self.scale * ((self.rows * characterDiameter) + ((self.rows + 1) * characterRadius))
+            windowWidth = self.scale * ((self.cols * characterDiameter) + ((self.cols + 1) * characterGap))
+            windowHeight = self.scale * ((self.rows * characterDiameter) + ((self.rows + 1) * characterGap))
             self.window = GraphWin("Retrotextual", windowWidth, windowHeight, autoflush=False)
             self.window.setBackground("black")
 
