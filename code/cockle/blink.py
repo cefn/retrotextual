@@ -1,3 +1,5 @@
+"""main.py regime to verify board is alive at all"""
+
 from machine import Pin
 from time import sleep
 
