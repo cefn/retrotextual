@@ -7,7 +7,7 @@ from timing import attempt, sleep
 # TODO understand why Mosquitto's old published values remain after newly launched publishdisplay script should be reset on launch since all newColor values should differ from prevColor, forcing an MQTT message
 
 segmentTopicTemplate = "{}/{}"
-segmentPeriod = 0.0001
+segmentPeriod = 0.05
 
 
 def marshallSegmentTopic(characterIndex, segmentIndex):
@@ -42,7 +42,7 @@ class MqttSenderCharacter(Character):
             if nextColor != prevColor:
                 self.prevColors[segmentIndex] = nextColor
                 await self.display.link.sendMessage(marshallSegmentTopic(self.characterIndex, segmentIndex), nextColor)
-                #await sleep(segmentPeriod)  # ensures an overall limit on segment dispatch rate
+                await sleep(segmentPeriod)  # ensures an overall limit on segment dispatch rate
 
 
 class MqttSenderDisplay(Display):
