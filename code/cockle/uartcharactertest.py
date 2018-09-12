@@ -15,13 +15,13 @@ homeConfig = dict(
 )
 
 mobileConfig = dict(
-    broker="192.168.43.58",
-    ssid="SkyMobile",
-    auth="c3fnh0ile",
+    broker="192.168.43.202",
+    ssid="glue",
+    auth="eulGpassword!",
 )
 
-#debugConfig = mobileConfig
-debugConfig = None
+debugConfig = mobileConfig
+#debugConfig = None
 
 MQTTClient.DEBUG = False  # suppress mqtt_as Memory reports
 
