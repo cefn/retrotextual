@@ -21,21 +21,24 @@ def getBrightness(index, zeroBrightnessIndex):
 async def scheduleLines(display, line1, line2, color, fadeDelay=defaultFadeOnDelay, showDelay=defaultOnDelay):
     display.clear(show=False)
 
+    numCharacters = len(display.characters)
+    halfNumCharacters = numCharacters // 2
+
     # create a brightness curve starting from a zeroIndex
     # todo do not waste time fading empty characters
     for zeroBrightnessIndex in range(len(display.characters) + fadeWidth):
 
-        for index in range(20):
+        for index in range(numCharacters):
             if index < len(line1):
                 character = display.characters[index]
                 character.drawLetter(line1[index],
                                      setBrightness(color, getBrightness(index, zeroBrightnessIndex)),
                                      show=False)
-            elif index < 10:
+            elif index < halfNumCharacters:
                 pass
-            elif index < 10 + len(line2):
+            elif index < halfNumCharacters + len(line2):
                 character = display.characters[index]
-                character.drawLetter(line2[index - 10],
+                character.drawLetter(line2[index - halfNumCharacters],
                                      setBrightness(color, getBrightness(index, zeroBrightnessIndex)),
                                      show=False)
             else:
@@ -48,7 +51,8 @@ async def scheduleLines(display, line1, line2, color, fadeDelay=defaultFadeOnDel
 
 async def scheduleMessage(display, message):
     color = hue_to_rgb(random.random())
-    lines = wrap(message, 10)
+    numCharacters = len(display.characters)
+    lines = wrap(message, numCharacters //2)
     if len(lines) % 2 != 0:
         lines.append("")  # empty line makes them an even number
     for pos in range(0, len(lines), 2):
@@ -56,7 +60,7 @@ async def scheduleMessage(display, message):
 
 
 async def schedulePangrams(display):
-    for mode in range(2):
+    for mode in [0]: # range(2): # previously went through upper, mixed and lower case
         for pangram in examples:
             if mode == 0:
                 pangram = pangram.upper()

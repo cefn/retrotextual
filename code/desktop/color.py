@@ -21,16 +21,18 @@ def hsb_to_rgb(h, s, b):
 def setBrightness(color, brightness):
     return [int(primary * brightness) for primary in color]
 
-red = [255, 0, 0]
-green = [0, 255, 0]
-blue = [0, 0, 255]
+MAX=127
 
-yellow = [255, 255, 0]
-purple = [255, 0, 255]
-teal = [0, 255, 255]
+red = [MAX, 0, 0]
+green = [0, MAX, 0]
+blue = [0, 0, MAX]
 
-orange = [255, 128, 0]
-pink = [255, 64, 64]
+yellow = [MAX, MAX, 0]
+purple = [MAX, 0, MAX]
+teal = [0, MAX, MAX]
 
-white = [255, 255, 255]
+orange = [MAX, MAX//2, 0]
+pink = [MAX, MAX//4, MAX//4]
+
+white = [MAX, MAX, MAX]
 black = [0, 0, 0]

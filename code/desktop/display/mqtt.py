@@ -46,10 +46,10 @@ class MqttSenderCharacter(Character):
 
 
 class MqttSenderDisplay(Display):
-    def __init__(self, link, cols=10, rows=2):
+    def __init__(self, link, cols=None, rows=None): # allow superclass to assert default cols, rows
         super().__init__(cols, rows)
         self.link = link
-        for characterIndex in range(cols * rows):
+        for characterIndex in range(self.cols * self.rows):
             self.characters.append(MqttSenderCharacter(self, characterIndex))
 
     def show(self):

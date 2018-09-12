@@ -1,8 +1,15 @@
 import segment.font.default as defaultFont
 from color import black
 
+defaultCols = 9
+defaultRows = 2
+
 class Display:
-    def __init__(self, cols=10, rows=2):
+    def __init__(self, cols=None, rows=None):
+        if cols is None:
+            cols = defaultCols
+        if rows is None:
+            rows = defaultRows
         self.cols = cols
         self.rows = rows
         self.characters = []
