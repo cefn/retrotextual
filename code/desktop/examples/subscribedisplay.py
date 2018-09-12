@@ -1,13 +1,14 @@
 from display.mqtt import MqttMonitor
 from timing import complete, sleep
 
+delay = 0.2 # should be 0.0 excepting case where CPU shared with animator and broker?
 
 def run(host=None):
 	monitor = MqttMonitor(host)
 
 	async def periodicDraw():
 		while True:
-			await sleep(0.2) # should be 0.0 excepting case where CPU shared with animator and broker?
+			await sleep(delay)
 			monitor.guiDisplay.show()
 
 	messageCoro = monitor.handleMessages()
