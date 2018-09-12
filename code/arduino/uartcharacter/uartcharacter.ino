@@ -1,3 +1,12 @@
+/** Deconstructs serial frames (sent by a Cockle)
+* and uses this RGB information to control segments of a 16-segment character
+* by remapping segment color information onto a string of WS2811-compatible pixels
+* taking account where color order is different depending on the vendor's pixel
+* design, and skipping pixels where they are known to be idle (spacer pixels which
+* save extra crimps). Contrast uartlights.ino which simply treats every color as
+* directly controlling a pixel in a chain.
+*/
+
 #include <Adafruit_NeoPixel.h>
 //#ifdef __AVR__
 //  #include <avr/power.h>
