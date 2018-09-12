@@ -3,7 +3,7 @@ Huge 16-segment displays for collaborative visual poetry.
 
 # About
 
-The Retrotextual project was conceived by technical architect Cefn Hoile, and imagined and designed with artists Suzie Cross and Dave Lynch for Leeds town centre.
+The Retrotextual project was conceived by technical architect and artist Cefn Hoile, and imagined and designed with artists Suzie Cross and Dave Lynch for Leeds town centre. It is now maintained by artist and technician [David Boultbee](https://github.com/davidboultbee/retrotextual)
 
 Installed in the windows of a high-rise tower block are 2mx2m square color-controllable 16 segment displays, allowing the creation of visual poetry using the segments to broadcast letters, numbers and visual animations across the city.
 
