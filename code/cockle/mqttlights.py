@@ -1,9 +1,8 @@
-"""Sends serial frames describing pixels to an Arduino driver board running uartcharacter.ino"""
-from neoSPI import NeoPixel
-from machine import SPI,freq
+from machine import freq
 from utime import ticks_ms, ticks_diff
 import gc
 from uasyncio import get_event_loop, sleep_ms
+gc.collect()
 from mqtt_as import MQTTClient, config
 from config import config
 import esp
@@ -23,9 +22,6 @@ livenessTopic = 'node/{}'.format(characterName)
 numSegments = 16
 segmentSize = 1
 numPixels = numSegments * segmentSize
-
-spi = SPI(1, baudrate=3200000)
-pixels = NeoPixel(spi, numPixels)
 
 framesPerSecond = 20
 drawPeriodMs = 1000 // framesPerSecond
