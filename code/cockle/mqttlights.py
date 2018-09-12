@@ -1,8 +1,8 @@
-from neoSPI import NeoPixel
-from machine import SPI,freq
+from machine import freq
 from utime import ticks_ms, ticks_diff
 import gc
 from uasyncio import get_event_loop, sleep_ms
+gc.collect()
 from mqtt_as import MQTTClient, config
 from config import config
 import esp
@@ -14,7 +14,8 @@ loop = get_event_loop()
 outages = 0
 lastUpMs = None
 
-SERVER = '10.42.0.1'
+#SERVER = '10.42.0.1'
+SERVER = '192.168.43.202'
 characterIndex = 0
 characterName = str(characterIndex).encode('ascii')
 segmentPattern = "{}/+".format(characterIndex)
@@ -22,9 +23,6 @@ livenessTopic = 'node/{}'.format(characterName)
 numSegments = 16
 segmentSize = 1
 numPixels = numSegments * segmentSize
-
-spi = SPI(1, baudrate=3200000)
-pixels = NeoPixel(spi, numPixels)
 
 framesPerSecond = 20
 drawPeriodMs = 1000 // framesPerSecond
@@ -115,8 +113,10 @@ async def launchClient(client):
 
 
 # Define configuration
-config['ssid'] = 'RetroFloorA' if characterIndex < 10 else 'RetroFloorB'
-config['wifi_pw'] = '4lphaT3xt' if characterIndex < 10 else '8ravoT3xt'
+#config['ssid'] = 'RetroFloorA' if characterIndex < 10 else 'RetroFloorB'
+#config['wifi_pw'] = '4lphaT3xt' if characterIndex < 10 else '8ravoT3xt'
+config['ssid'] = 'glue'
+config['wifi_pw'] = 'eulGpassword!'
 config['server'] = SERVER
 config['subs_cb'] = handleMessage
 config['wifi_coro'] = handleWifiState

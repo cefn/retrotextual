@@ -1,0 +1,71 @@
+# error thrown by github/cefn/retrotextual checkout eb34d859f525abb315768dd786df796a86179c2a
+
+Fatal read error on socket transport
+protocol: <asyncio.streams.StreamReaderProtocol object at 0xb217ffec>
+transport: <_SelectorSocketTransport fd=9 read=polling write=<idle, bufsize=0>>
+Traceback (most recent call last):
+  File "/usr/lib/python3.6/asyncio/selector_events.py", line 724, in _read_ready
+    data = self._sock.recv(self.max_size)
+TimeoutError: [Errno 110] Connection timed out
+ClientProtocolHandler Unhandled exception in reader coro: TimeoutError(110, 'Connection timed out')
+Disconnected from broker
+MQTT connection failed: OSError(101, 'Network is unreachable')
+Reconnection attempt failed: ConnectException(OSError(101, 'Network is unreachable'),)
+MQTT connection failed: OSError(101, 'Network is unreachable')
+Reconnection attempt failed: ConnectException(OSError(101, 'Network is unreachable'),)
+MQTT connection failed: OSError(101, 'Network is unreachable')
+Reconnection attempt failed: ConnectException(OSError(101, 'Network is unreachable'),)
+Maximum number of connection attempts reached. Reconnection aborted
+Traceback (most recent call last):
+  File "examples/subscribedisplay.py", line 19, in <module>
+    run('10.42.0.1')
+  File "examples/subscribedisplay.py", line 15, in run
+    complete([messageCoro, drawCoro])
+  File "/home/learner/Documents/git/retrotextual/code/desktop/timing.py", line 19, in complete
+    loop.run_until_complete(gather(*futures))
+  File "/usr/lib/python3.6/asyncio/base_events.py", line 449, in run_until_complete
+    return future.result()
+  File "/usr/lib/python3.6/asyncio/tasks.py", line 239, in _step
+    result = coro.send(None)
+  File "/home/learner/Documents/git/retrotextual/code/desktop/display/mqtt.py", line 65, in handleMessages
+    async for topic, message in link.receiveMessages():
+  File "/home/learner/Documents/git/retrotextual/code/desktop/mqtt/hb.py", line 29, in receiveMessages
+    message = await client.deliver_message()
+  File "/usr/local/lib/python3.6/dist-packages/hbmqtt/client.py", line 334, in deliver_message
+    self.client_tasks.pop()
+IndexError: pop from an empty deque
+Error in sys.excepthook:
+Traceback (most recent call last):
+  File "/usr/lib/python3/dist-packages/apport_python_hook.py", line 63, in apport_excepthook
+    from apport.fileutils import likely_packaged, get_recent_crashes
+  File "/usr/lib/python3/dist-packages/apport/__init__.py", line 5, in <module>
+    from apport.report import Report
+  File "/usr/lib/python3/dist-packages/apport/report.py", line 30, in <module>
+    import apport.fileutils
+  File "/usr/lib/python3/dist-packages/apport/fileutils.py", line 23, in <module>
+    from apport.packaging_impl import impl as packaging
+  File "/usr/lib/python3/dist-packages/apport/packaging_impl.py", line 23, in <module>
+    import apt
+  File "/usr/lib/python3/dist-packages/apt/__init__.py", line 23, in <module>
+    import apt_pkg
+ModuleNotFoundError: No module named 'apt_pkg'
+
+Original exception was:
+Traceback (most recent call last):
+  File "examples/subscribedisplay.py", line 19, in <module>
+    run('10.42.0.1')
+  File "examples/subscribedisplay.py", line 15, in run
+    complete([messageCoro, drawCoro])
+  File "/home/learner/Documents/git/retrotextual/code/desktop/timing.py", line 19, in complete
+    loop.run_until_complete(gather(*futures))
+  File "/usr/lib/python3.6/asyncio/base_events.py", line 449, in run_until_complete
+    return future.result()
+  File "/usr/lib/python3.6/asyncio/tasks.py", line 239, in _step
+    result = coro.send(None)
+  File "/home/learner/Documents/git/retrotextual/code/desktop/display/mqtt.py", line 65, in handleMessages
+    async for topic, message in link.receiveMessages():
+  File "/home/learner/Documents/git/retrotextual/code/desktop/mqtt/hb.py", line 29, in receiveMessages
+    message = await client.deliver_message()
+  File "/usr/local/lib/python3.6/dist-packages/hbmqtt/client.py", line 334, in deliver_message
+    self.client_tasks.pop()
+IndexError: pop from an empty deque
