@@ -1,6 +1,5 @@
 from timing import *
 from color import *
-from display.gui import GraphicsDisplay
 
 import pysher
 import pusher
@@ -9,8 +8,6 @@ import logging
 import sys
 
 import urllib.request, json
-
-display = GraphicsDisplay()
 
 root = logging.getLogger()
 root.setLevel(logging.INFO)
@@ -28,7 +25,12 @@ aPhrases = [
 ]
 iPhrase = 0
 
-async def scheduleMessage():
+def run(display):
+    async def render():
+        return await scheduleMessage(display)
+    forever(render)
+
+async def scheduleMessage(display):
     global iPhrase
     while iPhrase < len(aPhrases):
 
@@ -45,26 +47,29 @@ async def scheduleMessage():
             continue
 
         display.clear(show=False)
+        
+        frameDelay = 0.1
+        maxBrightness = 130
 
-        for red in range(0, 255):
+        for red in range(0, maxBrightness, 10):
             for _iIndex, cLetter in enumerate(sPhrase):
                 character = display.characters[_iIndex]
                 blue=red
                 character.drawLetter(cLetter, [red, green, blue], show=False)
 
             display.show()
-            await sleep(0.001)
+            await sleep(frameDelay)
 
-        for green in range(0, 255):
+        for green in range(0, maxBrightness, 10):
             for _iIndex, cLetter in enumerate(sPhrase):
                 character = display.characters[_iIndex]
                 red=255-green
                 character.drawLetter(cLetter, [red, green, blue], show=False)
 
             display.show()
-            await sleep(0.001)
+            await sleep(frameDelay)
 
-        for _green in range(0, 255):
+        for _green in range(0, maxBrightness, 10):
             for _iIndex, cLetter in enumerate(sPhrase):
                 character = display.characters[_iIndex]
                 green=255-_green
@@ -72,7 +77,7 @@ async def scheduleMessage():
                 character.drawLetter(cLetter, [red, green, blue], show=False)
 
             display.show()
-            await sleep(0.0001)
+            await sleep(frameDelay)
 
     iPhrase=0
 
@@ -107,5 +112,3 @@ pusher_receiver.connect()
 
 fDownloadList()
 fRegister({})
-
-forever(scheduleMessage)
