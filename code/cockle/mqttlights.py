@@ -1,3 +1,4 @@
+"""Sends serial frames describing pixels to an Arduino driver board running uartcharacter.ino"""
 from neoSPI import NeoPixel
 from machine import SPI,freq
 from utime import ticks_ms, ticks_diff
